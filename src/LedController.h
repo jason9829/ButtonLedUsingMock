@@ -6,10 +6,12 @@
 
 typedef struct LedButtonInfo LedButtonInfo;
 struct LedButtonInfo{
-  LedState FakeLedState;
+
   LedState CurrentLedState;
   ButtonState previousButtonState;
-  ButtonState TwoButtonStateBefore;
+  tempState tempStateForStatement;
+  Operation OnOrOff;
+  cyclesState Cycles;
 };
 
 void turnOnLedIfButtonIsPressed(void);

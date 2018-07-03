@@ -23,14 +23,19 @@ void test_turnOnLedIfButtonIsPressed_given_button_is_not_pressed_expect_led_is_t
 
 void test_doTapTurnOnTapTurnOffLed_given_led_is_off_button_is_pressed_and_released_expect_led_is_turned_on(void){
 
-    LedButtonInfo Info = {LED_OFF, BUTTON_NOT_PRESS,BUTTON_NOT_PRESS};
+    LedButtonInfo Info = {LED_OFF, BUTTON_NOT_PRESS,SET,TURN_ON};
 
     getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+    getcyclesState_ExpectAndReturn(FIRST_CYCLE);
     doTapTurnOnTapTurnOffLed(&Info);
+
     getButtonState_ExpectAndReturn(BUTTON_PRESS);
+    getcyclesState_ExpectAndReturn(SECOND_CYCLE);
     turnLed_Expect(LED_ON);
     doTapTurnOnTapTurnOffLed(&Info);
+
     getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+    getcyclesState_ExpectAndReturn(THIRD_CYCLE);
     doTapTurnOnTapTurnOffLed(&Info);
 
 
@@ -38,14 +43,19 @@ void test_doTapTurnOnTapTurnOffLed_given_led_is_off_button_is_pressed_and_releas
 }
 
 void test_doTapTurnOnTapTurnOffLed_given_led_is_on_button_is_pressed_and_released_expect_led_is_turned_off(void){
-
-  LedButtonInfo Info = {LED_ON, BUTTON_PRESS,BUTTON_NOT_PRESS};
+//                      currentLed , previousbut ,2 statesbeforebut
+  LedButtonInfo Info = {LED_ON, BUTTON_PRESS,TOGGLE,TURN_OFF};
 
   getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+  getcyclesState_ExpectAndReturn(FIRST_CYCLE);
   doTapTurnOnTapTurnOffLed(&Info);
+
   getButtonState_ExpectAndReturn(BUTTON_PRESS);
+  getcyclesState_ExpectAndReturn(SECOND_CYCLE);
   doTapTurnOnTapTurnOffLed(&Info);
+
   getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+  getcyclesState_ExpectAndReturn(THIRD_CYCLE);
   turnLed_Expect(LED_OFF);
   doTapTurnOnTapTurnOffLed(&Info);
 
@@ -54,35 +64,44 @@ void test_doTapTurnOnTapTurnOffLed_given_led_is_on_button_is_pressed_and_release
 }
 
 
-/*void test_doTapTurnOnTapTurnOffLed_given_led_is_off_button_is_pressed_and_released_expect_led_is_turned_off(void){
+void test_doTapTurnOnTapTurnOffLed_given_led_is_off_button_is_released_and_released_expect_led_is_turned_off(void){
 
-    LedButtonInfo Info = {LED_OFF,LED_OFF, BUTTON_NOT_PRESS,BUTTON_NOT_PRESS};
+    LedButtonInfo Info = {LED_OFF, BUTTON_NOT_PRESS,RESET,TURN_OFF};
 
     getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+    getcyclesState_ExpectAndReturn(FIRST_CYCLE);
     doTapTurnOnTapTurnOffLed(&Info);
+
     getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
-    turnLed_Expect(LED_ON);
+    getcyclesState_ExpectAndReturn(SECOND_CYCLE);
     doTapTurnOnTapTurnOffLed(&Info);
+
     getButtonState_ExpectAndReturn(BUTTON_NOT_PRESS);
+    getcyclesState_ExpectAndReturn(THIRD_CYCLE);
+    turnLed_Expect(LED_OFF);
     doTapTurnOnTapTurnOffLed(&Info);
 
 
     TEST_ASSERT_EQUAL(LED_OFF, Info.CurrentLedState);
 }
 
-void test_doTapTurnOnTapTurnOffLed_given_led_is_on_button_is_pressed_and_released_expect_led_is_turned_on(void){
+void test_doTapTurnOnTapTurnOffLed_given_led_is_on_button_is_pressed_and_pressed_expect_led_is_turned_on(void){
 
-  LedButtonInfo Info = {LED_OFF,LED_ON, BUTTON_PRESS,BUTTON_PRESS};
+  LedButtonInfo Info = {LED_ON, BUTTON_PRESS,TOGGLE,TURN_ON};
 
   getButtonState_ExpectAndReturn(BUTTON_PRESS);
+  getcyclesState_ExpectAndReturn(FIRST_CYCLE);
+  doTapTurnOnTapTurnOffLed(&Info);
+
+  getButtonState_ExpectAndReturn(BUTTON_PRESS);
+  getcyclesState_ExpectAndReturn(SECOND_CYCLE);
+
   doTapTurnOnTapTurnOffLed(&Info);
   getButtonState_ExpectAndReturn(BUTTON_PRESS);
-  doTapTurnOnTapTurnOffLed(&Info);
-  getButtonState_ExpectAndReturn(BUTTON_PRESS);
-  turnLed_Expect(LED_OFF);
+  getcyclesState_ExpectAndReturn(THIRD_CYCLE);
+  turnLed_Expect(LED_ON);
   doTapTurnOnTapTurnOffLed(&Info);
 
 
   TEST_ASSERT_EQUAL(LED_ON, Info.CurrentLedState);
 }
-*/

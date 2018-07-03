@@ -41,53 +41,84 @@ void turnOnLedIfButtonIsPressed(void){
 void doTapTurnOnTapTurnOffLed(LedButtonInfo *Info){
 
     //int CurrentLedState = Info->CurrentLedState;
-    //int previousButtonState = Info->previousButtonState;
+    //int previousButtonState = Info->previousButtonStat  e;
     //int TwoButtonStateBefore = Info->TwoButtonStateBefore;
     int currentButtonState = getButtonState();
+    int currentCycleState = getcyclesState();
 
 
-    // Turn On
-      if(Info->CurrentLedState == LED_OFF && Info->previousButtonState == BUTTON_NOT_PRESS && Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){       // check LED state
-      //if(Info->previousButtonState == BUTTON_NOT_PRESS || Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){  // check previouos button
+    // TURN ON (RELEASED - PRESS - RELEASED),1
+        if(Info->CurrentLedState == LED_OFF  && Info->OnOrOff== TURN_ON){       // check LED state
+        //if(Info->previousButtonState == BUTTON_NOT_PRESS || Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){  // check previouos button
 
-            if(currentButtonState == BUTTON_NOT_PRESS){     // first button
-              Info->TwoButtonStateBefore = BUTTON_NOT_PRESS;
+              if(currentButtonState == BUTTON_NOT_PRESS && currentCycleState == FIRST_CYCLE){     // first button
+                Info->tempStateForStatement = SET;
+              }
+              if (currentButtonState == BUTTON_PRESS && Info->tempStateForStatement == SET && currentCycleState == SECOND_CYCLE){
+                Info->previousButtonState = BUTTON_PRESS;
+                Info->CurrentLedState = LED_ON;
+                turnLed(LED_ON);
+              }
+
             }
-            if (currentButtonState == BUTTON_PRESS){
-              Info->previousButtonState = BUTTON_PRESS;
-              Info->CurrentLedState = LED_ON;
-              turnLed(LED_ON);
-            }
+			// TURN ON (PRESS - PRESS - PRESS),4
+          else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== TURN_ON){
+            if(currentButtonState == BUTTON_PRESS && currentCycleState == FIRST_CYCLE){
+              Info->tempStateForStatement = SET;
 
+
+            }
+            if(currentButtonState == BUTTON_PRESS && Info->tempStateForStatement == SET && currentCycleState == SECOND_CYCLE){
+              Info->tempStateForStatement = TOGGLE;
+
+            }
+              if(currentButtonState == BUTTON_PRESS && Info->tempStateForStatement == TOGGLE && currentCycleState == THIRD_CYCLE){
+                Info->previousButtonState = BUTTON_PRESS;
+                Info->CurrentLedState = LED_ON;
+                turnLed(LED_ON);
+              }
           }
 
+        // TURN OFF (RELEASED - PRESS - RELEASED),2
+          else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== TURN_OFF){
+        //if(Info->previousButtonState == BUTTON_PRESS || Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){
 
-      // Turn Off
-      else if (Info->CurrentLedState && LED_ON || Info->previousButtonState == BUTTON_PRESS || Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){
-      //if(Info->previousButtonState == BUTTON_PRESS || Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){
+
+              if(currentButtonState == BUTTON_NOT_PRESS && Info->tempStateForStatement ==TOGGLE && currentCycleState == FIRST_CYCLE){
+              Info->tempStateForStatement  = RESET;
+              }
+
+              if (currentButtonState == BUTTON_PRESS && Info->tempStateForStatement  == RESET && currentCycleState == SECOND_CYCLE ){
+                Info->previousButtonState = BUTTON_PRESS;
+                Info->tempStateForStatement  = TOGGLE;
 
 
-            if(currentButtonState == BUTTON_NOT_PRESS && Info->TwoButtonStateBefore == BUTTON_NOT_PRESS){
-              Info->TwoButtonStateBefore = BUTTON_NOT_PRESS;
-              Info->FakeLedState = LED_OFF;
+              }
+              if(Info->previousButtonState == BUTTON_PRESS && currentButtonState == BUTTON_NOT_PRESS && Info->tempStateForStatement  == TOGGLE && currentCycleState == THIRD_CYCLE){
+                Info->previousButtonState = BUTTON_NOT_PRESS;
+                Info->CurrentLedState = LED_OFF;
+                turnLed(LED_OFF);
             }
-
-            if (currentButtonState == BUTTON_PRESS ){
-              Info->previousButtonState = BUTTON_PRESS;
-              Info->TwoButtonStateBefore = BUTTON_PRESS;
-
-
-            }
-            if(Info->previousButtonState == BUTTON_PRESS && currentButtonState == BUTTON_NOT_PRESS && Info->TwoButtonStateBefore == BUTTON_PRESS){
-              Info->previousButtonState = BUTTON_NOT_PRESS;
-              Info->CurrentLedState = LED_OFF;
-              turnLed(LED_OFF);
           }
+		    // TURN OFF  (RELEASED - RELEASED - RELEASED),3
+            else if (Info->CurrentLedState == LED_OFF && Info->OnOrOff== TURN_OFF){
+              if(currentButtonState == BUTTON_NOT_PRESS && Info->tempStateForStatement == RESET && currentCycleState == FIRST_CYCLE){
+                Info->tempStateForStatement  = SET;
+                Info->CurrentLedState = LED_OFF;
 
+              }
+              if(currentButtonState == BUTTON_NOT_PRESS && Info->tempStateForStatement == SET && currentCycleState == SECOND_CYCLE){
+                Info->tempStateForStatement  = TOGGLE;
+                Info->CurrentLedState = LED_OFF;
 
-    }
-}
-
+              }
+              if(currentButtonState == BUTTON_NOT_PRESS && Info->tempStateForStatement == TOGGLE && currentCycleState == THIRD_CYCLE){
+                Info->previousButtonState = BUTTON_NOT_PRESS;
+                Info->CurrentLedState = LED_OFF;
+                turnLed(LED_OFF);
+              }
+          }
+  }
 
 /*void doTapTapLedController(void){
   LedState CurrentLedState
