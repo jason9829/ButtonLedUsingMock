@@ -18,14 +18,17 @@ typedef enum{
   SET    = 0,
   RESET  = 1,
   TOGGLE = 2,
+
 }tempState;
 
 /*
-  to diffentiate the if else statement for turn ON led or OFF
+  To diffentiate the if else statement for turn ON led or OFF
 */
 typedef enum{
   TURN_OFF = 0 ,
   TURN_ON  = 1 ,
+  STAY_OFF =2,
+  STAY_ON =3,
 }Operation;
 
 typedef enum{
