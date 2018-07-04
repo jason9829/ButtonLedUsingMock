@@ -10,18 +10,6 @@ typedef enum{
 } ButtonState;
 
 /*
-  tempState is use to differentiate/ break if else statement so
-  it wont run into same if else
-  NO specific meanig for SET, RESET, TOGGLE
-*/
-typedef enum{
-  SET    = 0,
-  RESET  = 1,
-  TOGGLE = 2,
-
-}tempState;
-
-/*
   To diffentiate the if else statement for turn ON led or OFF
 */
 typedef enum{
@@ -29,8 +17,12 @@ typedef enum{
   TURN_ON  = 1 ,
   STAY_OFF =2,
   STAY_ON =3,
-}Operation;
+} Operation;
 
+/*
+  Three cycles based on test
+  When at THIRD_CYCLE cyclesState set back to FIRST_CYCLE
+*/
 typedef enum{
   FIRST_CYCLE  = 1,
   SECOND_CYCLE = 2,

@@ -9,7 +9,6 @@ struct LedButtonInfo{
 
   LedState CurrentLedState;
   ButtonState previousButtonState;
-  tempState tempStateForStatement;
   Operation OnOrOff;
   cyclesState Cycles;
 };
