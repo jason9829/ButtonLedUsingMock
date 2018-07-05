@@ -1,6 +1,8 @@
+#include "unity.h"
 #include "LedController.h"
 #include "Led.h"
 #include "Button.h"
+#include "unity.h"
 
 /*void turnOnLedIfButtonIsPressed(void){
   if(getButtonState() != 0){
@@ -41,122 +43,141 @@ void turnOnLedIfButtonIsPressed(void){
 //3. Remain Led state
 //   Release -> Release -> Release -> [ON/OFF]
 
+// use switch so cant break after running operation in if / else statement
 void doTapTurnOnTapTurnOffLed(LedButtonInfo *Info){
 
-    //int CurrentLedState = Info->CurrentLedState;
-    //int previousButtonState = Info->previousButtonStat  e;
-    //int TwoButtonStateBefore = Info->TwoButtonStateBefore;
     int currentButtonState = getButtonState();
-    int currentCycleState = getcyclesState();
 
-
+    switch(Info->Cycles){
+      case FIRST_CYCLE:
         // TURN ON (RELEASED - PRESS - RELEASED),1
-        if(Info->CurrentLedState == LED_OFF  && Info->OnOrOff== TURN_ON){       // check LED state
-
-
-              if(currentButtonState == BUTTON_NOT_PRESS && currentCycleState == FIRST_CYCLE){     // first button
-
-              }
-              if (currentButtonState == BUTTON_PRESS  && currentCycleState == SECOND_CYCLE){
-                Info->previousButtonState = BUTTON_PRESS;
-                Info->CurrentLedState = LED_ON;
-                turnLed(LED_ON);
-              }
-              if (currentCycleState == THIRD_CYCLE){
-
-                currentCycleState= FIRST_CYCLE;
-              }
-
-            }
-			    // STAY ON (PRESS - PRESS -PRESS),5
-          else if (Info->CurrentLedState == LED_ON  && Info->OnOrOff== TURN_ON){
-            if(currentButtonState == BUTTON_PRESS && currentCycleState == FIRST_CYCLE){
-
-            }
-            if(currentButtonState == BUTTON_PRESS  && currentCycleState == SECOND_CYCLE){
-
-            }
-              if(currentButtonState == BUTTON_PRESS && currentCycleState == THIRD_CYCLE){
-                Info->previousButtonState = BUTTON_PRESS;
-                Info->CurrentLedState = LED_ON;
-                currentCycleState= FIRST_CYCLE;
-                turnLed(LED_ON);
-              }
-          }
-          // STAY OFF (PRESS - PRESS -PRESS),6
-          else if (Info->CurrentLedState == LED_OFF  && Info->OnOrOff== STAY_OFF){
-            if(currentButtonState == BUTTON_PRESS && currentCycleState == FIRST_CYCLE){
-
-              }
-            if(currentButtonState == BUTTON_PRESS  && currentCycleState == SECOND_CYCLE){
-              Info->previousButtonState = BUTTON_PRESS;
-
-            }
-              if(currentButtonState == BUTTON_PRESS  && currentCycleState == THIRD_CYCLE){
-                Info->previousButtonState = BUTTON_PRESS;
-                Info->CurrentLedState = LED_OFF;
-                currentCycleState= FIRST_CYCLE;
-                turnLed(LED_OFF);
-              }
-          }
-
-        // TURN OFF (RELEASED - PRESS - RELEASED),2
-          else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== TURN_OFF){
-              if(currentButtonState == BUTTON_NOT_PRESS && currentCycleState == FIRST_CYCLE){
-
-              }
-
-              if (currentButtonState == BUTTON_PRESS && currentCycleState == SECOND_CYCLE ){
-                Info->previousButtonState = BUTTON_PRESS;
-
-              }
-              if(Info->previousButtonState == BUTTON_PRESS && currentButtonState == BUTTON_NOT_PRESS && currentCycleState == THIRD_CYCLE){
-                Info->previousButtonState = BUTTON_NOT_PRESS;
-                Info->CurrentLedState = LED_OFF;
-                currentCycleState= FIRST_CYCLE;
-                turnLed(LED_OFF);
-            }
-          }
-          // STAY OFF (RELEASED - RELEASED - RELEASED),4
-            else if (Info->CurrentLedState == LED_OFF && Info->OnOrOff== TURN_OFF){
-              if(currentButtonState == BUTTON_NOT_PRESS  && currentCycleState == FIRST_CYCLE){
-
-                Info->CurrentLedState = LED_OFF;
-
-              }
-              if(currentButtonState == BUTTON_NOT_PRESS  && currentCycleState == SECOND_CYCLE){
-
-                Info->CurrentLedState = LED_OFF;
-
-              }
-              if(currentButtonState == BUTTON_NOT_PRESS && currentCycleState == THIRD_CYCLE){
-                Info->previousButtonState = BUTTON_NOT_PRESS;
-                Info->CurrentLedState = LED_OFF;
-                currentCycleState= FIRST_CYCLE;
-                turnLed(LED_OFF);
-              }
-          }
-           // STAY ON (RELEASED - RELEASED - RELEASED),3
-          else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== STAY_ON){
-            if(currentButtonState == BUTTON_NOT_PRESS  && currentCycleState == FIRST_CYCLE){
-
-              Info->CurrentLedState = LED_ON;
-
-            }
-            if(currentButtonState == BUTTON_NOT_PRESS  && currentCycleState == SECOND_CYCLE){
-            
-              Info->CurrentLedState = LED_ON;
-
-            }
-            if(currentButtonState == BUTTON_NOT_PRESS  && currentCycleState == THIRD_CYCLE){
-              Info->previousButtonState = BUTTON_NOT_PRESS;
-              Info->CurrentLedState = LED_ON;
-              currentCycleState= FIRST_CYCLE;
-              turnLed(LED_ON);
-            }
+        if (Info->CurrentLedState == LED_OFF  && Info->OnOrOff== TURN_ON && currentButtonState == BUTTON_RELEASED){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
         }
-  }
+        // TURN OFF (RELEASED - PRESS - RELEASED),2
+        else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== TURN_OFF && currentButtonState == BUTTON_RELEASED){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
+        }
+         // STAY ON (RELEASED - RELEASED - RELEASED),3
+        else if (Info->CurrentLedState == LED_ON && Info->OnOrOff== STAY_ON && currentButtonState == BUTTON_RELEASED){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
+        }
+        // STAY OFF (RELEASED - RELEASED - RELEASED),4
+        else if (Info->CurrentLedState == LED_OFF && Info->OnOrOff== TURN_OFF && currentButtonState == BUTTON_RELEASED){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
+        }
+        // STAY ON (PRESS - PRESS - PRESS),5
+        else if (Info->CurrentLedState == LED_ON  && Info->OnOrOff== STAY_ON && currentButtonState == BUTTON_PRESSED){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
+        }
+        // STAY OFF (PRESS - PRESS - PRESS),6
+        else if (Info->CurrentLedState == LED_OFF  && Info->OnOrOff== STAY_OFF && currentButtonState == BUTTON_PRESSED){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = SECOND_CYCLE;
+          break;
+        }
 
+      case SECOND_CYCLE:
+        // TURN ON (RELEASED - PRESS - RELEASED),1
+        if (currentButtonState == BUTTON_PRESSED  && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== TURN_ON){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = THIRD_CYCLE;
+          turnLed(LED_ON);
+          break;
+        }
+        // TURN OFF (RELEASED - PRESS - RELEASED),2
+        if (currentButtonState == BUTTON_PRESSED && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== TURN_OFF){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = THIRD_CYCLE;
+          break;
+        }
+         // STAY ON (RELEASED - RELEASED - RELEASED),3
+        if (currentButtonState == BUTTON_RELEASED  && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== STAY_ON){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = THIRD_CYCLE;
+          break;
+        }
+        // STAY OFF (RELEASED - RELEASED - RELEASED),4
+        if (currentButtonState == BUTTON_RELEASED  && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== TURN_OFF){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = THIRD_CYCLE;
+          break;
+        }
+        // STAY ON (PRESS - PRESS - PRESS),5
+        if (currentButtonState == BUTTON_PRESSED  && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== STAY_ON){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = THIRD_CYCLE;
+          break;
+        }
+        // STAY OFF (PRESS - PRESS - PRESS),6
+        if (currentButtonState == BUTTON_PRESSED  && Info->Cycles == SECOND_CYCLE && Info->OnOrOff== STAY_OFF){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->Cycles = THIRD_CYCLE;
+          break;
+        }
+
+      case THIRD_CYCLE:
+        // TURN ON (RELEASED - PRESS - RELEASED),1
+        if (Info->CurrentLedState == LED_OFF  && currentButtonState == BUTTON_RELEASED && Info->OnOrOff== TURN_ON){
+          Info->CurrentLedState = LED_ON;
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->Cycles = FIRST_CYCLE;
+          break;
+        }
+        // TURN OFF (RELEASED - PRESS - RELEASED),2
+        if (Info->CurrentLedState == LED_ON && currentButtonState == BUTTON_RELEASED && Info->OnOrOff== TURN_OFF){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->CurrentLedState = LED_OFF;
+          Info->Cycles= FIRST_CYCLE;
+          turnLed(LED_OFF);
+          break;
+        }
+         // STAY ON (RELEASED - RELEASED - RELEASED),3
+        if (Info->CurrentLedState == LED_ON && currentButtonState == BUTTON_RELEASED && Info->OnOrOff== STAY_ON){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->CurrentLedState = LED_ON;
+          Info->Cycles= FIRST_CYCLE;
+          turnLed(LED_ON);
+          break;
+        }
+        // STAY OFF (RELEASED - RELEASED - RELEASED),4
+        if (Info->CurrentLedState == LED_OFF && currentButtonState == BUTTON_RELEASED && Info->OnOrOff== TURN_OFF){
+          Info->previousButtonState = BUTTON_RELEASED;
+          Info->CurrentLedState = LED_OFF;
+          Info->Cycles= FIRST_CYCLE;
+          turnLed(LED_OFF);
+          break;
+        }
+        // STAY ON (PRESS - PRESS - PRESS),5
+        if (currentButtonState == BUTTON_PRESSED && Info->Cycles == THIRD_CYCLE && Info->OnOrOff== STAY_ON){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->CurrentLedState = LED_ON;
+          Info->Cycles= FIRST_CYCLE;
+          turnLed(LED_ON);
+          break;
+        }
+        // STAY OFF (PRESS - PRESS - PRESS),6
+        if (currentButtonState == BUTTON_PRESSED  && Info->Cycles == THIRD_CYCLE && Info->OnOrOff== STAY_OFF){
+          Info->previousButtonState = BUTTON_PRESSED;
+          Info->CurrentLedState = LED_OFF;
+          Info->Cycles= FIRST_CYCLE;
+          turnLed(LED_OFF);
+          break;
+        }
+      default:
+      TEST_FAIL_MESSAGE("Invalid Cycle");
+  }
+}
 /*void doTapTapLedController(void){
   LedState CurrentLedState
   while(1){
